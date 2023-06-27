@@ -20,6 +20,10 @@ export function Home() {
         slidesToShow: 3, // Số lượng item hiển thị trên mỗi slide
         slidesToScroll: 3,
     };
+    const VND = new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+    });
     return (
         <>
               <picture>
@@ -282,7 +286,7 @@ export function Home() {
                                                           <div className="product-thumbnail">
                                                               <a
                                                                   className="image_thumb scale_hover"
-                                                                  href=""
+                                                                  href={`/detail/${value.id}`}
                                                                   title={value.name}
                                                               >
                                                                   {" "}
@@ -494,7 +498,7 @@ export function Home() {
                                                           <div className="product-thumbnail">
                                                               <a
                                                                   className="image_thumb scale_hover"
-                                                                  href=""
+                                                                  href={`/detail/${value.id}`}
                                                                   title="Bưởi da xanh trái 1.7kg trở lên"
                                                               >
                                                                   {" "}

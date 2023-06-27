@@ -28,6 +28,12 @@ public class OrderProduct {
         this.customer = customer;
     }
 
+    public OrderProduct(Double price, LocalDate date, Customer customer) {
+        this.price = price;
+        this.date = date;
+        this.customer = customer;
+    }
+
     public Integer getId() {
         return id;
     }
