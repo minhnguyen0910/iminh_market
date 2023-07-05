@@ -14,7 +14,7 @@ import java.util.Date;
 public class JwtProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
     private String jwtSecret = "minh99";
-    private long jwtExpiration = 80640000L;
+    private long jwtExpiration = 8640000000L;
 //    public String createToken(Authentication authentication) {
 //
 //        UserPrinciple userPrincipal = (UserPrinciple) authentication.getPrincipal();

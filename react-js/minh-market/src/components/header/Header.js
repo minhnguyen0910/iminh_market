@@ -1,8 +1,39 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import "./header.css"
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {searchByName} from "../../service/ProductService";
 
 export function Header() {
+    const [listProduct, setListProduct] = useState([])
+    const [active,setActive]=useState("")
+    const navigate=useNavigate()
+    const [username, setUserName] = useState(localStorage.getItem("username"))
+    const handleLogOut = () => {
+        localStorage.setItem("username", null)
+        setUserName(null)
+        navigate("")
+    }
+    const handleSearch=async ()=>{
+        const name=document.getElementById("nameSearch").value
+        const result=await searchByName(name)
+        setListProduct(result)
+        console.log(result)
+    }
+    const handleActive=(name)=>{
+        console.log(name)
+        if (name==="trangchu"){
+            setActive("trangchu")
+        }else if(name==="sanpham"){
+            setActive("sanpham")
+        }else if (name==="chinhsach"){
+            setActive("chinhsach")
+        }else if(name==="introduce"){
+            setActive("introduce")
+        }else if(name==="lienhe"){
+            setActive("lienhe")
+        }
+
+    }
     return (
         <>
             <header className="header" style={{minHeight: "150px"}}>
@@ -18,20 +49,23 @@ export function Header() {
                             </svg>
                         </div>
                         <div className="col-lg-2">
-                            <a href="/" className="logo" title="Logo">
+                            <Link to="/" className="logo" title="Logo">
                                 <img width="220" height="27"
-                                     src="https://bizweb.dktcdn.net/100/485/131/themes/906771/assets/logo.png?1686556941849"
+                                     src="/logo.png"
                                      alt="Dola Organic"/>
-                            </a>
+                            </Link>
                         </div>
                         <div className="col-lg-5  search-header">
                             <div className="search-smart">
                                 <div className="header-search-form input-group search-bar"
                                      role="search">
                                     <input type="text" name="query" required=""
+                                           id="nameSearch"
                                            className="input-group-field auto-search search-auto form-control"/>
-                                    <input type="hidden" name="type" value="product"/>
-                                    <button type="submit" className="btn icon-fallback-text" aria-label="Tìm kiếm"
+                                    <input type="hidden" name="type" value="product" />
+                                    <button
+                                        onClick={()=>handleSearch()}
+                                        type="submit" className="btn icon-fallback-text" aria-label="Tìm kiếm"
                                             title="Tìm kiếm">
                                         <svg width="20" height="20" viewBox="0 0 20 20" fill="#000"
                                              xmlns="http://www.w3.org/2000/svg">
@@ -51,32 +85,11 @@ export function Header() {
                                     </svg>
                                     <span>
                                         <b>Hotline : </b>
-                                        <a href="">1900 6750</a>
+                                        <a href="">096123456</a>
                                     </span>
                                 </li>
                                 <li className="header-account d-lg-flex d-none">
-                                     <Link to={localStorage.getItem("username")!==null ? "/cart" : "/login"}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 40 40">
-                                            <defs></defs>
-                                            <g id="ic-user">
-                                                <g id="_6-User" data-name="6-User">
-                                                    <g id="Group_18" data-name="Group 18">
-                                                        <path className="cls-1" id="Path_92" data-name="Path 92"
-                                                              d="M20,22.21a6.12,6.12,0,1,0-6.12-6.12h0A6.13,6.13,0,0,0,20,22.21ZM20,12a4.08,4.08,0,1,1-4.08,4.08A4.08,4.08,0,0,1,20,12Z"></path>
-                                                        <path id="Path_93" data-name="Path 93" className="cls-1"
-                                                              d="M20,4.88A16.31,16.31,0,1,0,36.31,21.19,16.31,16.31,0,0,0,20,4.88Zm0,2A14.25,14.25,0,0,1,31.93,29a15.23,15.23,0,0,0-21.38-2.47A15.66,15.66,0,0,0,8.07,29,14.25,14.25,0,0,1,20,6.92Zm0,28.54A14.24,14.24,0,0,1,9.35,30.65a13.24,13.24,0,0,1,21.3,0A14.24,14.24,0,0,1,20,35.46Z"></path>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </svg>
-                                    </Link>
-                                    <ul>
-                                        <li><Link to="/register" href="">Đăng kí</Link></li>
-                                        <li><Link to="/login">Đăng nhập</Link></li>
-                                    </ul>
-                                </li>
-                                <li className="header-account d-lg-flex d-none">
-                                    <Link to={localStorage.getItem("username")!==null ? "/cart" : "/login"}>
+                                    <Link to={username ? "/cart" : "/login"}>
                                         <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 40 40">
                                             <defs></defs>
                                             <g id="ic-user">
@@ -91,6 +104,38 @@ export function Header() {
 
                                     </Link>
                                 </li>
+                                <li className="header-account d-lg-flex d-none">
+                                    <div className="dropdown">
+                                        <Link>
+                                            <svg style={{width: "25px", height: "25px", color: "white", zIndex: "100",fill: "white"}}
+                                                 xmlns="http://www.w3.org/2000/svg" data-name="Layer 1"
+                                                 viewBox="0 0 40 40">
+                                                <defs></defs>
+                                                <g id="ic-user">
+                                                    <g id="_6-User" data-name="6-User">
+                                                        <g id="Group_18" data-name="Group 18">
+                                                            <path className="cls-1" id="Path_92" data-name="Path 92"
+                                                                  d="M20,22.21a6.12,6.12,0,1,0-6.12-6.12h0A6.13,6.13,0,0,0,20,22.21ZM20,12a4.08,4.08,0,1,1-4.08,4.08A4.08,4.08,0,0,1,20,12Z"></path>
+                                                            <path id="Path_93" data-name="Path 93" className="cls-1"
+                                                                  d="M20,4.88A16.31,16.31,0,1,0,36.31,21.19,16.31,16.31,0,0,0,20,4.88Zm0,2A14.25,14.25,0,0,1,31.93,29a15.23,15.23,0,0,0-21.38-2.47A15.66,15.66,0,0,0,8.07,29,14.25,14.25,0,0,1,20,6.92Zm0,28.54A14.24,14.24,0,0,1,9.35,30.65a13.24,13.24,0,0,1,21.3,0A14.24,14.24,0,0,1,20,35.46Z"></path>
+                                                        </g>
+                                                    </g>
+                                                </g>
+                                            </svg>
+                                        </Link>
+                                        {username ?
+                                            <div className="dropdown-content">
+                                                <a href="/history">Thông tin cá nhân</a>
+                                                <Link onClick={handleLogOut}>Đăng xuất</Link>
+                                            </div> :
+                                            <div className="dropdown-content">
+                                                <a href="/login">Đăng nhập</a>
+                                                <a href="#">Đăng kí</a>
+                                            </div>
+                                        }
+
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -98,30 +143,41 @@ export function Header() {
                         <div className="header-menu-des">
                             <nav className="header-nav">
                                 <ul className="item_big">
-                                    <li className="nav-item active">
-                                        <a className="a-img" href="/" title="Trang chủ">
+                                    <li className={`nav-item`}>
+                                        <Link
+                                            onClick={()=>handleActive("trangchu")}
+                                            to={"/"}
+                                            className={`a-img ${active==="trangchu"? "activess": ""}`}   title="Trang chủ">
                                             Trang chủ
-                                        </a>
+                                        </Link>
                                     </li>
-                                    <li className="nav-item active">
-                                        <a className="a-img" href="/" title="Trang chủ">
+                                    <li className={`nav-item`}>
+                                        <Link
+                                            onClick={()=>handleActive("sanpham")}
+                                            className={`a-img ${active==="sanpham"? "activess": ""}`} to={"/list-product"} title="Sản phẩm">
                                             Sản phẩm
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li className="nav-item active">
-                                        <a className="a-img" href="/" title="Trang chủ">
+                                        <Link
+                                            onClick={()=>handleActive("chinhsach")}
+                                            className={`a-img ${active==="chinhsach"? "activess": ""}`} to={"/policy"} title="Chính sách thành viên">
                                             Chính sách thành viên
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li className="nav-item active">
-                                        <a className="a-img" href="/" title="Trang chủ">
+                                        <Link
+                                            onClick={()=>handleActive("introduce")}
+                                            className={`a-img ${active==="introduce"? "activess": ""}`} to={"/introduce"} title="Giới thiệu">
                                             Giới thiệu
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li className="nav-item active">
-                                        <a className="a-img" href="/" title="Trang chủ">
+                                        <Link
+                                            onClick={()=>handleActive("lienhe")}
+                                            className={`a-img ${active==="lienhe"? "activess": ""}`} to={"/policy"} title="Liên hệ">
                                             Liên hệ
-                                        </a>
+                                        </Link>
                                     </li>
                                 </ul>
                             </nav>

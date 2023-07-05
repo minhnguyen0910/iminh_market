@@ -342,3 +342,10 @@ a {
     text-decoration: none !important;
     color: #777a7c
 }
+.product-action .product-info .price-box .compare-price {
+    color: #666;
+    display: inline-block;
+    margin-left: 20%;
+    font-weight: 400;
+    font-size: 14px;
+}

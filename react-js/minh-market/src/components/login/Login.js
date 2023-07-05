@@ -1,14 +1,31 @@
 import "./login.css"
-import React from "react";
+import React, {useEffect} from "react";
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {loginAcc} from "../../service/LoginService";
 import {useNavigate} from "react-router";
+import {Header} from "../header/Header";
+import {Footer} from "../footer/Footer";
 
 
 export function Login() {
-    const navigate=useNavigate()
+    const navigate = useNavigate()
+
+    function setWithExpiry(key, value, expiryMinutes) {
+        const now = new Date();
+        const expiry = new Date(now.getTime() + expiryMinutes * 60000); // thời gian hết hạn tính bằng phút
+        const item = {
+            ...value,
+            expiry: expiry.getTime()
+        };
+        localStorage.setItem(key, JSON.stringify(item));
+    }
+    useEffect(()=>{
+        document.title="Đăng nhập"
+    },[])
+
     return (
         <>
+            <Header/>
             <Formik
                 initialValues={{
                     username: "",
@@ -17,6 +34,7 @@ export function Login() {
                 onSubmit={values => {
                     const login = async () => {
                         const result = await loginAcc(values);
+                        // setWithExpiry("formLogin",values,1440)
                         localStorage.setItem("token", result.token)
                         localStorage.setItem("username", result.username)
                         localStorage.setItem("role", result.role)
@@ -28,7 +46,10 @@ export function Login() {
                 <Form>
                     <div className="bodywrap">
                         <section className="bread-crumb"
-                                 style={{background: "linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.3))"}}>
+                                 style={{
+                                     background: "linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.3))",
+                                     backgroundImage: "url(https://bizweb.dktcdn.net/100/485/131/themes/906771/assets/breadcrumb.jpg?1686556941849) ,linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.3))"
+                                 }}>
                             <div className="container">
                                 <div className="title-bread-crumb"> Đăng nhập tài khoản</div>
                             </div>
@@ -92,7 +113,7 @@ export function Login() {
                 </Form>
 
             </Formik>
-
+            <Footer/>
         </>
     )
 }

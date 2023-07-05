@@ -20,12 +20,6 @@ import java.util.List;
 public class CartController {
     @Autowired
     private ICartService iCartService;
-    @Autowired
-    private IOrderDetailService iOrderDetailService;
-    @Autowired
-    private IOrderProductService iOrderProductService;
-    @Autowired
-    private CustomerRepository customerRepository;
 
     @GetMapping("/list")
     public ResponseEntity<List<Cart>> findByCustomer(@RequestParam(name = "nameAcc") String nameAcc) {
@@ -52,23 +46,15 @@ public class CartController {
         return new ResponseEntity<>(url, HttpStatus.OK);
     }
 
-    @GetMapping("/create")
-    public ResponseEntity<?> create(@RequestParam(name = "userName") String userName) {
-        List<Cart> list = iCartService.findByNameAcc(userName);
-        Customer customer = customerRepository.findByAccount_Name(userName);
-        Double price = 0.0;
-        for (Cart cart : list) {
-            if (cart.getQtt() > cart.getProduct().getQtt()) {
-                cart.setQtt(cart.getProduct().getQtt());
-                cart.setPrice(cart.getQtt() * cart.getProduct().getPrice());
-                iCartService.save(cart);
-            }
-            price += cart.getPrice();
-        }
-        OrderProduct orderProduct = iOrderProductService.save(new OrderProduct(price, LocalDate.now(), customer));
-        for (Cart cart : list) {
-            iOrderDetailService.save(new OrderDetail(new IdOrderDetail(orderProduct.getId(), cart.getProduct().getId()), orderProduct, cart.getProduct(), cart.getQtt(), cart.getPrice()));
-        }
+    @PostMapping("/saveCart")
+    public ResponseEntity<?> saveCart(@RequestBody CartDTO cartDTO) {
+        iCartService.addCart(cartDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/deleteCart")
+    public ResponseEntity<?> deleteCart(@RequestBody IdCart idCart) {
+        iCartService.delete(idCart);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

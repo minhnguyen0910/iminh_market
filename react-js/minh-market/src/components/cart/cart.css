@@ -109,6 +109,7 @@
     font-size: 12px;
 }
 .cart-page .cart_body .cart_info .cart_name .remove-item-cart {
+    border: none;
     display: block;
     color: #679210;
 }
@@ -212,4 +213,37 @@
 .total-price {
     color: #679210;
     font-weight: bold;
+}
+.formVAT {
+    padding: 10px;
+    background: #efffcf;
+    width: 100%;
+    float: left;
+    border-radius: 5px;
+}
+form h4 {
+    font-size: 18px;
+    font-weight: bold;
+}
+.r-bill .bill-field .form-group {
+    margin-bottom: 10px;
+    padding: 0;
+}
+.r-bill .bill-field label {
+    line-height: 1.8;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+.r-bill .bill-field .form-control {
+    box-shadow: none;
+    background-clip: padding-box;
+    border-radius: 3px;
+    border-color: #e6e6e6;
+    height: 34px;
+    font-size: 14px;
+    border: initial;
+    width: 100%;
+}
+.r-bill .bill-field .form-group input {
+    margin-bottom: 0;
 }

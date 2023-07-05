@@ -12,8 +12,8 @@ export function Footer() {
 
                                 <a href="/" className="logo-ft" title="Logo">
                                     <img width="220" height="27"
-                                         src="//bizweb.dktcdn.net/100/485/131/themes/906771/assets/logo-ft.png?1686556941849"
-                                         alt="Dola Organic"/>
+                                         src="/logo.png"
+                                         alt="Minh Market"/>
                                 </a>
                                 <div className="content-ft">
                                     Chúng tôi hi vọng tất cả người tiêu dùng Việt nam sẽ được sử dụng những thụ phẩm rau

@@ -10,9 +10,9 @@ import java.util.*;
 
 public class VnPayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_Returnurl ="http://localhost:3000/confirm";
-    public static String vnp_TmnCode ="RWFPQ956";
-    public static String vnp_HashSecret ="ZHYLJPWNXHCRPSONOSGBBHJAKMHYBTYK";
+    public static String vnp_Returnurl = "http://localhost:3000/confirm";
+    public static String vnp_TmnCode = "RWFPQ956";
+    public static String vnp_HashSecret = "ZHYLJPWNXHCRPSONOSGBBHJAKMHYBTYK";
     public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
     public static String md5(String message) {

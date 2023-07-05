@@ -1,0 +1,29 @@
+.sort-cate-left {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.sort-cate-left h3 {
+    color: #000;
+    font-size: 14px;
+    float: left;
+    margin: 0;
+    margin-top: 2px;
+}
+.sort-cate-left ul {
+    display: flex;
+}
+.sort-cate-left ul li {
+    margin-left: 10px;
+}
+.sort-cate-left ul li button {
+    color: #679210;
+    display: block;
+    padding: 5px 10px;
+    border: 1px solid #76a713;
+    border-radius: 5px;
+}
+.item_product_main{
+    width: 90%;
+    margin-top: 15px;
+}

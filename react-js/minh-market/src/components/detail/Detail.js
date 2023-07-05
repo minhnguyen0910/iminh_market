@@ -3,13 +3,22 @@ import "./detail.css"
 import {useParams} from "react-router";
 import {findAll, findById} from "../../service/ProductService";
 import Slider from "react-slick";
+import {Field, Form, Formik} from "formik";
+import {saveCart} from "../../service/CartService";
+import {toast} from "react-toastify";
+import {Header} from "../header/Header";
+import {Footer} from "../footer/Footer";
 
 
 export function Detail() {
     const param = useParams()
     const [product, setProduct] = useState({})
     const [listProduct, setListProduct] = useState([])
-    const [type,setType]=useState(0)
+    const [type, setType] = useState(0)
+    const username = localStorage.getItem("username")
+    useEffect(()=>{
+        document.title="Chi tiết"
+    },[])
     const settings = {
         dots: true,
         infinite: true,
@@ -31,6 +40,21 @@ export function Detail() {
             document.getElementById("qttPro").value = qtt;
         }
     }
+    const handleAddCart = async () => {
+        const qtt=document.getElementById("qttPro").value;
+        if (qtt<=0){
+            toast("sản phẩm đã hết hàng")
+        }else {
+            const cartDTO = {
+                idPro: product.id,
+                username: username,
+                qtt: document.getElementById("qttPro").value
+            }
+            await saveCart(cartDTO)
+            toast("thêm vào giỏ hàng thành công")
+        }
+
+    }
     useEffect(() => {
         const fetchApi = async () => {
             const result = await findAll();
@@ -41,11 +65,19 @@ export function Detail() {
         }
         fetchApi()
     }, [])
+    const VND = new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+    });
     return (
         product && listProduct && <>
+            <Header/>
             <div className="bodywrap">
                 <section className="bread-crumb"
-                         style={{"background": "linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.3))"}}>
+                         style={{
+                             background: "linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.3))",
+                             backgroundImage: "url(https://bizweb.dktcdn.net/100/485/131/themes/906771/assets/breadcrumb.jpg?1686556941849) ,linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.3))"
+                         }}>
                     <div className="container">
                         <div className="title-bread-crumb">
                             {product.name}
@@ -74,6 +106,7 @@ export function Detail() {
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div className=" col-12 col-md-6 col-lg-4">
                                             <div className="details-pro">
                                                 <h1 className="title-product">{product.name}</h1>
@@ -96,20 +129,24 @@ export function Detail() {
                                                     <div className="price-box clearfix">
                                                         <span className="special-price">
                                                             <span
-                                                                className="price product-price">{product.price}đ</span>
+                                                                className="price product-price">{VND.format(product.price)}</span>
                                                         </span>
                                                     </div>
                                                     <div className="form-product">
                                                         <div className="clearfix form-group">
                                                             <div className="flex-quantity">
                                                                 <div className="custom custom-btn-number show">
-                                                                    <label className="sl section">Số lượng : </label>
-                                                                    <div className="input_number_product form-control">
+                                                                    <label className="sl section">Số lượng
+                                                                        : </label>
+                                                                    <div
+                                                                        className="input_number_product form-control">
                                                                         <button
                                                                             onClick={() => handleMinus()}
                                                                             className="btn_num num_1 button button_qty">-
                                                                         </button>
-                                                                        <input type="text" maxLength="3" value={1}
+                                                                        <input name="qtt"
+                                                                               type="text" maxLength="3"
+                                                                               value={product.qtt>0?1:0}
                                                                                id="qttPro"
                                                                                className="form-control prd_quantity"/>
                                                                         <button
@@ -118,8 +155,10 @@ export function Detail() {
                                                                         </button>
                                                                     </div>
                                                                 </div>
-                                                                <div className="btn-mua button_actions clearfix">
+                                                                <div
+                                                                    className="btn-mua button_actions clearfix">
                                                                     <button
+                                                                        onClick={()=>handleAddCart()}
                                                                         className="btn btn_base normal_button btn_add_cart add_to_cart btn-cart">
                                                                         <span className="icon">
                                                                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -231,64 +270,94 @@ export function Detail() {
                                                     className="product-relate-swiper swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
                                                     {/*<div className="swiper-wrapper"*/}
                                                     {/*     style={{transform: "translate3d(0px, 0px, 0px);"}}>*/}
-                                                        <Slider {...settings}>
-                                                            {listProduct.filter(value => value.typeProduct.id === type).map((value, index) => (
-                                                                <div>
-                                                                    <div className="swiper-slide swiper-slide-active"
-                                                                         style={{
-                                                                             width: "90%",
-                                                                             marginRight: "5px"
-                                                                         }}>
-                                                                        <div className=" item_product_main">
-                                                                            <div className="variants product-action">
-                                                                                <div className="product-thumbnail">
-                                                                                    <a href={`/detail/${value.id}`}
-                                                                                       className="image_thumb scale_hover">
-                                                                                        <img width="234" height="234"
-                                                                                             className="lazyload image1 loaded"
-                                                                                             src={value.image}
-                                                                                             data-src={value.image}
-                                                                                             data-was-processed="true"/>
-                                                                                    </a>
-                                                                                    <div className="action">
-                                                                                        <button
-                                                                                            className="btn-cart btn-views"
-                                                                                            title="Xem chi tiết">
-                                                                                            <svg
-                                                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                                                viewBox="0 0 448 512">
-                                                                                                <path fill="#fff"
-                                                                                                      d="M120 256c0 30.9-25.1 56-56 56s-56-25.1-56-56s25.1-56 56-56s56 25.1 56 56zm160 0c0 30.9-25.1 56-56 56s-56-25.1-56-56s25.1-56 56-56s56 25.1 56 56zm104 56c-30.9 0-56-25.1-56-56s25.1-56 56-56s56 25.1 56 56s-25.1 56-56 56z"/>
-                                                                                            </svg>
-                                                                                        </button>
-                                                                                        <a href="" title="Xem nhanh"
-                                                                                           data-handle="kim-chi-cai-thao-cat-lat-bibigo-ong-kim-s-goi"
-                                                                                           className="quick-view btn-views">
-                                                                                            <svg
-                                                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                                                viewBox="0 0 512 512">
-                                                                                                <path fill="#fff"
-                                                                                                      d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
-                                                                                            </svg>
+                                                    <Slider {...settings}>
+                                                        {listProduct.filter(value => value.typeProduct.id === type).map((value, index) => (
+                                                            <div>
+                                                                <Formik
+                                                                    initialValues={{
+                                                                        idPro: value.id,
+                                                                        username: username,
+                                                                        qtt: 1
+                                                                    }}
+                                                                    onSubmit={(values) => {
+                                                                        console.log(values.qtt)
+                                                                        if (value.qtt<=0){
+                                                                            toast("sản phẩm đã hết hàng")
+                                                                        }else {
+                                                                            const save = async () => {
+                                                                                await saveCart(values)
+                                                                                toast("thêm vào giỏ hàng thành công")
+                                                                            }
+                                                                            save()
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <Form>
+                                                                        <div
+                                                                            className="swiper-slide swiper-slide-active"
+                                                                            style={{
+                                                                                width: "90%",
+                                                                                marginRight: "5px"
+                                                                            }}>
+                                                                            <div className=" item_product_main">
+                                                                                <div
+                                                                                    className="variants product-action">
+                                                                                    <div className="product-thumbnail">
+                                                                                        <a href={`/detail/${value.id}`}
+                                                                                           className="image_thumb scale_hover">
+                                                                                            <img width="234"
+                                                                                                 height="234"
+                                                                                                 className="lazyload image1 loaded"
+                                                                                                 src={value.image}
+                                                                                                 data-src={value.image}
+                                                                                                 data-was-processed="true"/>
                                                                                         </a>
-                                                                                    </div>
-                                                                                    <div className="product-info">
-                                                                                        <h3 className="product-name">
+                                                                                        <div className="action">
+                                                                                            <button
+                                                                                                type="submit"
+                                                                                                className="btn-cart btn-views"
+                                                                                                title="Thêm vào giỏ hàng">
+                                                                                                <svg
+                                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                                    viewBox="0 0 576 512">
+                                                                                                    <path fill="#fff"
+                                                                                                          d="M253.3 35.1c6.1-11.8 1.5-26.3-10.2-32.4s-26.3-1.5-32.4 10.2L117.6 192H32c-17.7 0-32 14.3-32 32s14.3 32 32 32L83.9 463.5C91 492 116.6 512 146 512H430c29.4 0 55-20 62.1-48.5L544 256c17.7 0 32-14.3 32-32s-14.3-32-32-32H458.4L365.3 12.9C359.2 1.2 344.7-3.4 332.9 2.7s-16.3 20.6-10.2 32.4L404.3 192H171.7L253.3 35.1zM192 304v96c0 8.8-7.2 16-16 16s-16-7.2-16-16V304c0-8.8 7.2-16 16-16s16 7.2 16 16zm96-16c8.8 0 16 7.2 16 16v96c0 8.8-7.2 16-16 16s-16-7.2-16-16V304c0-8.8 7.2-16 16-16zm128 16v96c0 8.8-7.2 16-16 16s-16-7.2-16-16V304c0-8.8 7.2-16 16-16s16 7.2 16 16z"></path>
+                                                                                                </svg>
+                                                                                            </button>
                                                                                             <a href=""
-                                                                                               className="line-clamp line-clamp-2"
-                                                                                               title={value.name}>{value.name}</a>
-                                                                                        </h3>
-                                                                                        <div
-                                                                                            className="price-box">{value.price}</div>
+                                                                                               title="Xem chi tiết"
+                                                                                               data-handle="kim-chi-cai-thao-cat-lat-bibigo-ong-kim-s-goi"
+                                                                                               className="quick-view btn-views">
+                                                                                                <svg
+                                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                                    viewBox="0 0 512 512">
+                                                                                                    <path fill="#fff"
+                                                                                                          d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+                                                                                                </svg>
+                                                                                            </a>
+                                                                                        </div>
+                                                                                        <div className="product-info">
+                                                                                            <h3 className="product-name">
+                                                                                                <a href=""
+                                                                                                   className="line-clamp line-clamp-2"
+                                                                                                   title={value.name}>{value.name}</a>
+                                                                                            </h3>
+                                                                                            <div
+                                                                                                className="price-box">{VND.format(value.price)}
+                                                                                                {value.qtt>0? (<span className="compare-price">Số lượng : {value.qtt}</span>):(<span className="compare-price">Hết hàng</span>)}
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
-                                                            ))}
+                                                                    </Form>
+                                                                </Formik>
 
-                                                        </Slider>
+                                                            </div>
+                                                        ))}
+
+                                                    </Slider>
                                                     {/*</div>*/}
                                                 </div>
                                             </div>
@@ -300,6 +369,7 @@ export function Detail() {
                     </div>
                 </section>
             </div>
+            <Footer/>
         </>
     )
 }
